@@ -1,20 +1,94 @@
-import { Routes, Route } from "react-router-dom"
-import Input from "./components/Input"
-import SingUpPage from "./pages/SingUpPage"
-import LoginPage from "./pages/LoginPage"
+import { Navigate, Route, Routes } from "react-router-dom";
+
+import SignUpPage from "./pages/SingUpPage";
+import LoginPage from "./pages/LoginPage";
+
+import { useAuthStore } from "./store/authStore";
+import { useEffect } from "react";
+
+const ProtectedRoute = ({ children }) => {
+	const { isAuthenticated, user } = useAuthStore();
+
+	if (!isAuthenticated) {
+		return <Navigate to='/login' replace />;
+	}
+
+	/*if (!user.isVerified) {
+		return <Navigate to='/verify-email' replace />;
+	}*/
+
+	return children;
+};
+
+// redirect authenticated users to the home page
+const RedirectAuthenticatedUser = ({ children }) => {
+	const { isAuthenticated, user } = useAuthStore();
+
+	if (isAuthenticated && user.isVerified) {
+		return <Navigate to='/' replace />;
+	}
+
+	return children;
+};
 
 function App() {
-  return (
-    <div>
-      <Input label={"Usuario"}/>
-      <h1 className='text-red-500'>Hello</h1>
-      <Routes>
-        <Route path="/" element={"home"}/>
-        <Route path="signup" element={<SingUpPage/>}/>
-        <Route path="login" element={<LoginPage/>}/>
-      </Routes>
-    </div>
-  )
+	const { isCheckingAuth, checkAuth } = useAuthStore();
+
+	useEffect(() => {
+		checkAuth();
+	}, [checkAuth]);
+
+	//if (isCheckingAuth) return <LoadingSpinner />;
+
+	return (
+		<div className='min-h-screen'>
+			<Routes>
+				<Route
+					path='/'
+					element={
+						<ProtectedRoute>
+						</ProtectedRoute>
+					}
+				/>
+				<Route
+					path='/signup'
+					element={
+						<RedirectAuthenticatedUser>
+							<SignUpPage />
+						</RedirectAuthenticatedUser>
+					}
+				/>
+				<Route
+					path='/login'
+					element={
+						<RedirectAuthenticatedUser>
+							<LoginPage />
+						</RedirectAuthenticatedUser>
+					}
+				/>
+				{/*<Route path='/verify-email' element={<EmailVerificationPage />} />
+				<Route
+					path='/forgot-password'
+					element={
+						<RedirectAuthenticatedUser>
+							<ForgotPasswordPage />
+						</RedirectAuthenticatedUser>
+					}
+				/>
+
+				<Route
+					path='/reset-password/:token'
+					element={
+						<RedirectAuthenticatedUser>
+							<ResetPasswordPage />
+						</RedirectAuthenticatedUser>
+					}
+				/>*/}
+				{/* catch all routes */}
+				<Route path='*' element={<Navigate to='/' replace />} />
+			</Routes>
+		</div>
+	);
 }
 
-export default App
+export default App;
