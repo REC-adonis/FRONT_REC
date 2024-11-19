@@ -25,11 +25,10 @@ export const useAuthStore = create((set) => ({
 	},login: async (email, password) => {
 		set({ isLoading: true, error: null });
 		try {
-			console.log("Datos enviados a login:", { email, password }); // Para depuración
 			const response = await axios.post(
 				`${API_URL}/login`,
-				{ email, password }, // Asegúrate de que el objeto tiene estas propiedades
-				{ withCredentials: true } // Permite cookies
+				{ email, password },
+				{ withCredentials: true }
 			);
 			console.log("Respuesta del backend:", response.data); // Para depuración
 			set({
@@ -39,7 +38,6 @@ export const useAuthStore = create((set) => ({
 				isLoading: false,
 			});
 		} catch (error) {
-			console.error("Error en login:", error.response?.data || error.message); // Depuración
 			set({
 				error: error.response?.data?.message || "Error logging in",
 				isLoading: false,
