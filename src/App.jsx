@@ -1,7 +1,8 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 
-import SignUpPage from "./pages/SingUpPage";
+import SignUpPage from "./pages/SignUpPage";
 import LoginPage from "./pages/LoginPage";
+import DashboardPage from "./pages/DashboardPage";
 
 import { useAuthStore } from "./store/authStore";
 import { useEffect } from "react";
@@ -47,6 +48,7 @@ function App() {
 					path='/'
 					element={
 						<ProtectedRoute>
+							<DashboardPage />
 						</ProtectedRoute>
 					}
 				/>

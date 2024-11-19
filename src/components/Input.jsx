@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 
-const TextInput = ({ label, supportingText, type = "text" }) => {
+const TextInput = ({ label, supportingText, type = "text", value, onChange }) => {
     const [focused, setFocused] = useState(false);
-    const [value, setValue] = useState('');
     const [showPassword, setShowPassword] = useState(false);
 
     const handleFocus = () => setFocused(true);
@@ -20,7 +19,7 @@ const TextInput = ({ label, supportingText, type = "text" }) => {
             <label
                 className={`absolute left-2 transition-all duration-200 ease-in-out ${
                     focused || value
-                        ? '-top-3 left-3 text-xs text-red-500 bg-white px-1'
+                        ? '-top-3 left-3 text-xs text-blue-500 bg-white px-1'
                         : 'top-2 text-gray-500'
                 }`}
             >
@@ -28,11 +27,11 @@ const TextInput = ({ label, supportingText, type = "text" }) => {
             </label>
             <input
                 type={type === "password" && !showPassword ? "password" : "text"}
-                className="w-96 p-2 pt-4 border border-gray-300 rounded-md outline-none focus:border-red-500"
+                className="w-96 p-2 pt-4 border border-gray-300 rounded-md outline-none focus:border-blue-500"
                 onFocus={handleFocus}
                 onBlur={handleBlur}
-                onChange={(e) => setValue(e.target.value)}
-                value={value}
+                onChange={onChange} // Aquí usamos el onChange del padre
+                value={value} // Aquí usamos el value del padre
             />
             {type === "password" && (
                 <button

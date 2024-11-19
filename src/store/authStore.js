@@ -22,11 +22,16 @@ export const useAuthStore = create((set) => ({
 			set({ error: error.response.data.message || "Error signing up", isLoading: false });
 			throw error;
 		}
-	},
-	login: async (email, password) => {
+	},login: async (email, password) => {
 		set({ isLoading: true, error: null });
 		try {
-			const response = await axios.post(`${API_URL}/login`, { email, password });
+			console.log("Datos enviados a login:", { email, password }); // Para depuración
+			const response = await axios.post(
+				`${API_URL}/login`,
+				{ email, password }, // Asegúrate de que el objeto tiene estas propiedades
+				{ withCredentials: true } // Permite cookies
+			);
+			console.log("Respuesta del backend:", response.data); // Para depuración
 			set({
 				isAuthenticated: true,
 				user: response.data.user,
@@ -34,11 +39,14 @@ export const useAuthStore = create((set) => ({
 				isLoading: false,
 			});
 		} catch (error) {
-			set({ error: error.response?.data?.message || "Error logging in", isLoading: false });
+			console.error("Error en login:", error.response?.data || error.message); // Depuración
+			set({
+				error: error.response?.data?.message || "Error logging in",
+				isLoading: false,
+			});
 			throw error;
 		}
 	},
-
 	logout: async () => {
 		set({ isLoading: true, error: null });
 		try {
@@ -59,17 +67,18 @@ export const useAuthStore = create((set) => ({
 			set({ error: error.response.data.message || "Error verifying email", isLoading: false });
 			throw error;
 		}
-	},
-	checkAuth: async () => {
+	},checkAuth: async () => {
 		set({ isCheckingAuth: true, error: null });
 		try {
-			const response = await axios.get(`${API_URL}/check-auth`);
+			const response = await axios.get(`${API_URL}/check-auth`, { withCredentials: true });
+			console.log("Respuesta de checkAuth:", response.data); // Para depuración
 			set({ user: response.data.user, isAuthenticated: true, isCheckingAuth: false });
 		} catch (error) {
-			set({ error: null, isCheckingAuth: false, isAuthenticated: false });
+			console.error("Error en checkAuth:", error.response?.data || error.message); // Para depuración
+			set({ isCheckingAuth: false, isAuthenticated: false, error: null });
 		}
-	},
-	forgotPassword: async (email) => {
+	},		
+	/*forgotPassword: async (email) => {
 		set({ isLoading: true, error: null });
 		try {
 			const response = await axios.post(`${API_URL}/forgot-password`, { email });
@@ -94,5 +103,5 @@ export const useAuthStore = create((set) => ({
 			});
 			throw error;
 		}
-	},
+	},*/
 }));
